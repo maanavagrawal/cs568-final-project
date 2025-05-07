@@ -1,19 +1,79 @@
-import nltk
-print(".")
-nltk.download('punkt')
-nltk.download('punkt_tab')
-print("..")
-from textblob import TextBlob
-from nltk.tag import StanfordNERTagger
-from nltk.tokenize import word_tokenize, sent_tokenize
+stats = [
+    {'delta_base': 20, 'delta_fine_tuned': -8, 'sentiment_human': 0.05000000000000001, 'sentiment_base': 0.3333333333333333, 'sentiment_fine_tuned': 0.1625, 'human_contains_name': False, 'base_contains_name': False, 'fine_tuned_contains_name': False},
+    {'delta_base': 20, 'delta_fine_tuned': 28, 'sentiment_human': 0.11875, 'sentiment_base': 0.2714285714285714, 'sentiment_fine_tuned': 0.05000000000000001, 'human_contains_name': False, 'base_contains_name': True, 'fine_tuned_contains_name': False},
+    {'delta_base': 55, 'delta_fine_tuned': 101, 'sentiment_human': 0.06617857142857143, 'sentiment_base': 0.52, 'sentiment_fine_tuned': 0.1, 'human_contains_name': False, 'base_contains_name': False, 'fine_tuned_contains_name': False},
+    {'delta_base': 22, 'delta_fine_tuned': 9, 'sentiment_human': 0.23311688311688314, 'sentiment_base': 0.14305555555555557, 'sentiment_fine_tuned': 0.08993055555555556, 'human_contains_name': False, 'base_contains_name': False, 'fine_tuned_contains_name': False},
+    {'delta_base': 45, 'delta_fine_tuned': 5, 'sentiment_human': 0.137037037037037, 'sentiment_base': 0.3925925925925926, 'sentiment_fine_tuned': 0.1318181818181818, 'human_contains_name': False, 'base_contains_name': False, 'fine_tuned_contains_name': False},
+    {'delta_base': -130, 'delta_fine_tuned': 13, 'sentiment_human': -0.156875, 'sentiment_base': 0.16262626262626262, 'sentiment_fine_tuned': -0.2, 'human_contains_name': False, 'base_contains_name': False, 'fine_tuned_contains_name': False},
+    {'delta_base': -162, 'delta_fine_tuned': -186, 'sentiment_human': 0.02920048701298701, 'sentiment_base': 0.23903061224489794, 'sentiment_fine_tuned': 0.09615384615384617, 'human_contains_name': True, 'base_contains_name': True, 'fine_tuned_contains_name': False},
+    {'delta_base': -22, 'delta_fine_tuned': -46, 'sentiment_human': 0.2375, 'sentiment_base': 0.08333333333333333, 'sentiment_fine_tuned': 0.36912337662337663, 'human_contains_name': False, 'base_contains_name': False, 'fine_tuned_contains_name': False},
+    {'delta_base': -139, 'delta_fine_tuned': -214, 'sentiment_human': 0.09791666666666665, 'sentiment_base': 0.19806892453951278, 'sentiment_fine_tuned': 0.02697245564892622, 'human_contains_name': True, 'base_contains_name': True, 'fine_tuned_contains_name': False},
+    {'delta_base': -160, 'delta_fine_tuned': -47, 'sentiment_human': 0.15813492063492063, 'sentiment_base': 0.05231481481481481, 'sentiment_fine_tuned': 0.1044642857142857, 'human_contains_name': True, 'base_contains_name': False, 'fine_tuned_contains_name': False},
+    {'delta_base': 211, 'delta_fine_tuned': 119, 'sentiment_human': 0.17696078431372553, 'sentiment_base': 0.3666666666666667, 'sentiment_fine_tuned': 0.18588235294117647, 'human_contains_name': True, 'base_contains_name': False, 'fine_tuned_contains_name': False},
+    {'delta_base': 206, 'delta_fine_tuned': 233, 'sentiment_human': 0.22225829725829727, 'sentiment_base': -0.009090909090909089, 'sentiment_fine_tuned': 0.325, 'human_contains_name': False, 'base_contains_name': False, 'fine_tuned_contains_name': False},
+    {'delta_base': 27, 'delta_fine_tuned': -20, 'sentiment_human': 0.3395833333333333, 'sentiment_base': 0.2714285714285714, 'sentiment_fine_tuned': 0.16666666666666666, 'human_contains_name': True, 'base_contains_name': False, 'fine_tuned_contains_name': False},
+    {'delta_base': 12, 'delta_fine_tuned': -70, 'sentiment_human': 0.18236607142857142, 'sentiment_base': -0.2023809523809524, 'sentiment_fine_tuned': 0.15819597069597074, 'human_contains_name': True, 'base_contains_name': False, 'fine_tuned_contains_name': False},
+    {'delta_base': 51, 'delta_fine_tuned': 49, 'sentiment_human': 0.15277777777777782, 'sentiment_base': 0.07111111111111111, 'sentiment_fine_tuned': -0.1876373626373626, 'human_contains_name': True, 'base_contains_name': True, 'fine_tuned_contains_name': False},
+    {'delta_base': 50, 'delta_fine_tuned': 49, 'sentiment_human': 0.03194444444444444, 'sentiment_base': 0.08928571428571426, 'sentiment_fine_tuned': 0.11339285714285713, 'human_contains_name': True, 'base_contains_name': True, 'fine_tuned_contains_name': False},
+    {'delta_base': -172, 'delta_fine_tuned': -44, 'sentiment_human': 0.10555555555555557, 'sentiment_base': 0.09916383219954648, 'sentiment_fine_tuned': 0.13939393939393938, 'human_contains_name': False, 'base_contains_name': True, 'fine_tuned_contains_name': False},
+    {'delta_base': 146, 'delta_fine_tuned': 140, 'sentiment_human': 0.04102564102564103, 'sentiment_base': 0.19351851851851853, 'sentiment_fine_tuned': -0.08630952380952381, 'human_contains_name': True, 'base_contains_name': True, 'fine_tuned_contains_name': True},
+    {'delta_base': -128, 'delta_fine_tuned': 30, 'sentiment_human': 0.10211038961038961, 'sentiment_base': 0.04597222222222223, 'sentiment_fine_tuned': -0.030867346938775495, 'human_contains_name': True, 'base_contains_name': False, 'fine_tuned_contains_name': False},
+    {'delta_base': 45, 'delta_fine_tuned': 34, 'sentiment_human': 0.008035714285714276, 'sentiment_base': 0.03506493506493507, 'sentiment_fine_tuned': -0.3648065476190476, 'human_contains_name': True, 'base_contains_name': True, 'fine_tuned_contains_name': False},
+    {'delta_base': -5, 'delta_fine_tuned': 69, 'sentiment_human': 0.128125, 'sentiment_base': 0.22142857142857142, 'sentiment_fine_tuned': 0.7, 'human_contains_name': True, 'base_contains_name': True, 'fine_tuned_contains_name': False},
+    {'delta_base': 228, 'delta_fine_tuned': 184, 'sentiment_human': 0.10968045112781954, 'sentiment_base': 0.07125, 'sentiment_fine_tuned': -0.16406249999999994, 'human_contains_name': True, 'base_contains_name': True, 'fine_tuned_contains_name': False},
+    {'delta_base': 29, 'delta_fine_tuned': 35, 'sentiment_human': 0.3333333333333333, 'sentiment_base': 0.16875000000000004, 'sentiment_fine_tuned': 0.19999999999999998, 'human_contains_name': True, 'base_contains_name': False, 'fine_tuned_contains_name': False},
+    {'delta_base': 10, 'delta_fine_tuned': -309, 'sentiment_human': -0.024999999999999994, 'sentiment_base': 0.2375, 'sentiment_fine_tuned': 0.19261083743842367, 'human_contains_name': False, 'base_contains_name': True, 'fine_tuned_contains_name': False},
+    {'delta_base': -10, 'delta_fine_tuned': -75, 'sentiment_human': 0.4166666666666667, 'sentiment_base': 0.27653061224489794, 'sentiment_fine_tuned': 0.023647186147186142, 'human_contains_name': True, 'base_contains_name': False, 'fine_tuned_contains_name': False},
+    {'delta_base': -151, 'delta_fine_tuned': -166, 'sentiment_human': -0.65, 'sentiment_base': 0.0773809523809524, 'sentiment_fine_tuned': -0.14140624999999998, 'human_contains_name': False, 'base_contains_name': True, 'fine_tuned_contains_name': False},
+    {'delta_base': -93, 'delta_fine_tuned': -78, 'sentiment_human': 0.1619047619047619, 'sentiment_base': -0.0691220238095238, 'sentiment_fine_tuned': 0.05654761904761902, 'human_contains_name': False, 'base_contains_name': False, 'fine_tuned_contains_name': False},
+    {'delta_base': -18, 'delta_fine_tuned': -33, 'sentiment_human': 0.175, 'sentiment_base': 0.2122767857142857, 'sentiment_fine_tuned': 0.1775, 'human_contains_name': False, 'base_contains_name': False, 'fine_tuned_contains_name': False},
+    {'delta_base': -21, 'delta_fine_tuned': -40, 'sentiment_human': 0.23358585858585856, 'sentiment_base': 0.2019345238095238, 'sentiment_fine_tuned': -0.0796875, 'human_contains_name': False, 'base_contains_name': False, 'fine_tuned_contains_name': False},
+    {'delta_base': -103, 'delta_fine_tuned': 19, 'sentiment_human': 0.4013221153846154, 'sentiment_base': 0.171875, 'sentiment_fine_tuned': -0.0375, 'human_contains_name': False, 'base_contains_name': False, 'fine_tuned_contains_name': False},
+    {'delta_base': 90, 'delta_fine_tuned': 107, 'sentiment_human': 0.09322916666666667, 'sentiment_base': 0.5123376623376623, 'sentiment_fine_tuned': 0.021173469387755106, 'human_contains_name': False, 'base_contains_name': False, 'fine_tuned_contains_name': False},
+    {'delta_base': 8, 'delta_fine_tuned': -27, 'sentiment_human': -0.025568181818181823, 'sentiment_base': 0.12222222222222223, 'sentiment_fine_tuned': 0.18552875695732837, 'human_contains_name': False, 'base_contains_name': False, 'fine_tuned_contains_name': False},
+    {'delta_base': 22, 'delta_fine_tuned': 57, 'sentiment_human': 0.2604166666666667, 'sentiment_base': -0.06138888888888888, 'sentiment_fine_tuned': 0.35, 'human_contains_name': False, 'base_contains_name': False, 'fine_tuned_contains_name': False},
+    {'delta_base': 115, 'delta_fine_tuned': 11, 'sentiment_human': -0.018663911845730033, 'sentiment_base': 0.08148148148148146, 'sentiment_fine_tuned': 0.27678571428571425, 'human_contains_name': False, 'base_contains_name': False, 'fine_tuned_contains_name': False},
+    {'delta_base': 92, 'delta_fine_tuned': -135, 'sentiment_human': 0.16071428571428573, 'sentiment_base': 0.05897435897435895, 'sentiment_fine_tuned': -0.01363168724279837, 'human_contains_name': False, 'base_contains_name': False, 'fine_tuned_contains_name': False},
+    {'delta_base': 23, 'delta_fine_tuned': -276, 'sentiment_human': 0.2351190476190476, 'sentiment_base': 0.1488095238095238, 'sentiment_fine_tuned': -0.07027777777777779, 'human_contains_name': False, 'base_contains_name': False, 'fine_tuned_contains_name': False},
+    {'delta_base': 12, 'delta_fine_tuned': -248, 'sentiment_human': 0.034999999999999996, 'sentiment_base': 0.48, 'sentiment_fine_tuned': 0.07058862433862433, 'human_contains_name': False, 'base_contains_name': False, 'fine_tuned_contains_name': False},
+    {'delta_base': -91, 'delta_fine_tuned': 17, 'sentiment_human': 0.2017857142857143, 'sentiment_base': 0.07111992945326279, 'sentiment_fine_tuned': 0.038571428571428576, 'human_contains_name': False, 'base_contains_name': False, 'fine_tuned_contains_name': False},
+    {'delta_base': -65, 'delta_fine_tuned': -1, 'sentiment_human': 0.04974489795918367, 'sentiment_base': -0.10123015873015873, 'sentiment_fine_tuned': -0.19642857142857142, 'human_contains_name': False, 'base_contains_name': False, 'fine_tuned_contains_name': False},
+    {'delta_base': -73, 'delta_fine_tuned': -248, 'sentiment_human': 0.09930555555555555, 'sentiment_base': 0.1867361111111111, 'sentiment_fine_tuned': 0.05728291316526611, 'human_contains_name': False, 'base_contains_name': False, 'fine_tuned_contains_name': False},
+    {'delta_base': 44, 'delta_fine_tuned': 24, 'sentiment_human': 0.13255208333333335, 'sentiment_base': 0.1703703703703704, 'sentiment_fine_tuned': 0.014583333333333337, 'human_contains_name': False, 'base_contains_name': False, 'fine_tuned_contains_name': False},
+    {'delta_base': 18, 'delta_fine_tuned': -75, 'sentiment_human': 0.18333333333333332, 'sentiment_base': 0.010714285714285707, 'sentiment_fine_tuned': -0.2006122448979592, 'human_contains_name': False, 'base_contains_name': False, 'fine_tuned_contains_name': False},
+    {'delta_base': -52, 'delta_fine_tuned': 26, 'sentiment_human': 0.5, 'sentiment_base': 0.08214285714285713, 'sentiment_fine_tuned': 0.24285714285714285, 'human_contains_name': False, 'base_contains_name': False, 'fine_tuned_contains_name': True},
+    {'delta_base': 58, 'delta_fine_tuned': -14, 'sentiment_human': -0.00874999999999999, 'sentiment_base': 0.13333333333333333, 'sentiment_fine_tuned': -0.013095238095238096, 'human_contains_name': False, 'base_contains_name': False, 'fine_tuned_contains_name': False},
+    {'delta_base': 210, 'delta_fine_tuned': 106, 'sentiment_human': 0.13379917184265008, 'sentiment_base': 0.25, 'sentiment_fine_tuned': -0.015476190476190465, 'human_contains_name': False, 'base_contains_name': False, 'fine_tuned_contains_name': False},
+    {'delta_base': -157, 'delta_fine_tuned': -104, 'sentiment_human': -0.11000000000000003, 'sentiment_base': 0.031512605042016806, 'sentiment_fine_tuned': 0.1170138888888889, 'human_contains_name': False, 'base_contains_name': False, 'fine_tuned_contains_name': False},
+    {'delta_base': -5, 'delta_fine_tuned': -41, 'sentiment_human': 0.04489795918367347, 'sentiment_base': 0.034740259740259745, 'sentiment_fine_tuned': 0.06488636363636363, 'human_contains_name': False, 'base_contains_name': False, 'fine_tuned_contains_name': False},
+    {'delta_base': -46, 'delta_fine_tuned': 36, 'sentiment_human': 0.16507936507936508, 'sentiment_base': 0.2153846153846154, 'sentiment_fine_tuned': -0.3125, 'human_contains_name': False, 'base_contains_name': False, 'fine_tuned_contains_name': False},
+    {'delta_base': 87, 'delta_fine_tuned': -5, 'sentiment_human': 0.15701058201058202, 'sentiment_base': 0.08333333333333333, 'sentiment_fine_tuned': 0.07341269841269842, 'human_contains_name': False, 'base_contains_name': False, 'fine_tuned_contains_name': False},
+    {'delta_base': 35, 'delta_fine_tuned': 5, 'sentiment_human': 0.03452380952380952, 'sentiment_base': 0.23376623376623376, 'sentiment_fine_tuned': 0.24264842300556588, 'human_contains_name': False, 'base_contains_name': False, 'fine_tuned_contains_name': False},
+    {'delta_base': 95, 'delta_fine_tuned': 176, 'sentiment_human': 0.17916666666666667, 'sentiment_base': 0.18049242424242426, 'sentiment_fine_tuned': 0.20833333333333334, 'human_contains_name': False, 'base_contains_name': False, 'fine_tuned_contains_name': False},
+    {'delta_base': 36, 'delta_fine_tuned': 31, 'sentiment_human': 0.35000000000000003, 'sentiment_base': 0.24722222222222223, 'sentiment_fine_tuned': 0.041666666666666664, 'human_contains_name': False, 'base_contains_name': False, 'fine_tuned_contains_name': False},
+    {'delta_base': -40, 'delta_fine_tuned': -82, 'sentiment_human': 0.08611111111111111, 'sentiment_base': 0.35208333333333336, 'sentiment_fine_tuned': -0.07980769230769232, 'human_contains_name': False, 'base_contains_name': False, 'fine_tuned_contains_name': True},
+    {'delta_base': -23, 'delta_fine_tuned': 19, 'sentiment_human': 0.22142857142857142, 'sentiment_base': 0.09938822751322751, 'sentiment_fine_tuned': 0.10654761904761903, 'human_contains_name': False, 'base_contains_name': False, 'fine_tuned_contains_name': False},
+    {'delta_base': 23, 'delta_fine_tuned': -75, 'sentiment_human': 0.20959595959595959, 'sentiment_base': 0.08035714285714286, 'sentiment_fine_tuned': 0.03729629629629629, 'human_contains_name': False, 'base_contains_name': False, 'fine_tuned_contains_name': False},
+    {'delta_base': 4, 'delta_fine_tuned': -80, 'sentiment_human': 0.33697916666666666, 'sentiment_base': 0.08303571428571428, 'sentiment_fine_tuned': 0.08518518518518518, 'human_contains_name': False, 'base_contains_name': False, 'fine_tuned_contains_name': False},
+    {'delta_base': 116, 'delta_fine_tuned': -63, 'sentiment_human': 0.022150415721844292, 'sentiment_base': 0.1875, 'sentiment_fine_tuned': 0.0645, 'human_contains_name': False, 'base_contains_name': False, 'fine_tuned_contains_name': False},
+    {'delta_base': 17, 'delta_fine_tuned': 5, 'sentiment_human': 0.018055555555555557, 'sentiment_base': 0.175, 'sentiment_fine_tuned': -0.1125, 'human_contains_name': False, 'base_contains_name': False, 'fine_tuned_contains_name': False},
+    {'delta_base': -6, 'delta_fine_tuned': -274, 'sentiment_human': 0.29500000000000004, 'sentiment_base': 0.1578125, 'sentiment_fine_tuned': 0.07898629148629148, 'human_contains_name': False, 'base_contains_name': True, 'fine_tuned_contains_name': True},
+    {'delta_base': -20, 'delta_fine_tuned': -7, 'sentiment_human': 0.11412337662337664, 'sentiment_base': 0.27999999999999997, 'sentiment_fine_tuned': -0.009943181818181823, 'human_contains_name': False, 'base_contains_name': False, 'fine_tuned_contains_name': False},
+    {'delta_base': 10, 'delta_fine_tuned': 2, 'sentiment_human': 0.24553571428571427, 'sentiment_base': 0.3056122448979592, 'sentiment_fine_tuned': 0.25785714285714284, 'human_contains_name': False, 'base_contains_name': True, 'fine_tuned_contains_name': True},
+    {'delta_base': 3, 'delta_fine_tuned': 8, 'sentiment_human': 0.0, 'sentiment_base': 0.22222222222222224, 'sentiment_fine_tuned': 0.05000000000000001, 'human_contains_name': False, 'base_contains_name': False, 'fine_tuned_contains_name': False},
+    {'delta_base': -61, 'delta_fine_tuned': 43, 'sentiment_human': -0.375, 'sentiment_base': -0.13370535714285714, 'sentiment_fine_tuned': -0.1392857142857143, 'human_contains_name': False, 'base_contains_name': False, 'fine_tuned_contains_name': False},
+    {'delta_base': -86, 'delta_fine_tuned': -240, 'sentiment_human': -0.0053571428571428615, 'sentiment_base': 0.30416666666666664, 'sentiment_fine_tuned': 0.12717120181405894, 'human_contains_name': False, 'base_contains_name': False, 'fine_tuned_contains_name': False},
+    {'delta_base': 4, 'delta_fine_tuned': -104, 'sentiment_human': 0.2119047619047619, 'sentiment_base': 0.3333333333333333, 'sentiment_fine_tuned': 0.26075757575757574, 'human_contains_name': False, 'base_contains_name': False, 'fine_tuned_contains_name': False},
+    {'delta_base': -56, 'delta_fine_tuned': 111, 'sentiment_human': 0.32648351648351653, 'sentiment_base': 0.30046296296296304, 'sentiment_fine_tuned': 0.275, 'human_contains_name': False, 'base_contains_name': False, 'fine_tuned_contains_name': False},
+    {'delta_base': 29, 'delta_fine_tuned': 40, 'sentiment_human': 0.29583333333333334, 'sentiment_base': 0.2702922077922078, 'sentiment_fine_tuned': 0.13333333333333333, 'human_contains_name': False, 'base_contains_name': False, 'fine_tuned_contains_name': False},
+    {'delta_base': 20, 'delta_fine_tuned': 2, 'sentiment_human': 0.2828571428571428, 'sentiment_base': 0.6333333333333333, 'sentiment_fine_tuned': 0.09583333333333333, 'human_contains_name': False, 'base_contains_name': False, 'fine_tuned_contains_name': False},
+    {'delta_base': -68, 'delta_fine_tuned': -172, 'sentiment_human': -0.2, 'sentiment_base': 0.19427083333333334, 'sentiment_fine_tuned': 0.1553571428571429, 'human_contains_name': False, 'base_contains_name': False, 'fine_tuned_contains_name': False},
+    {'delta_base': 52, 'delta_fine_tuned': -227, 'sentiment_human': 0.26, 'sentiment_base': 0.25, 'sentiment_fine_tuned': 0.06962719298245615, 'human_contains_name': False, 'base_contains_name': False, 'fine_tuned_contains_name': False},
+    {'delta_base': -25, 'delta_fine_tuned': -14, 'sentiment_human': 0.29523809523809524, 'sentiment_base': 0.14444444444444443, 'sentiment_fine_tuned': 0.05000000000000001, 'human_contains_name': False, 'base_contains_name': False, 'fine_tuned_contains_name': False},
+    {'delta_base': -39, 'delta_fine_tuned': 5, 'sentiment_human': 0.13333333333333333, 'sentiment_base': 0.16333333333333333, 'sentiment_fine_tuned': 0.1142857142857143, 'human_contains_name': False, 'base_contains_name': False, 'fine_tuned_contains_name': False},
+]
 
-jar = "/Users/dkVenom/Desktop/cs568/cs568-final-project/stanford-ner-2020-11-17/stanford-ner.jar"
-model = "/Users/dkVenom/Desktop/cs568/cs568-final-project/stanford-ner-2020-11-17/classifiers/english.all.3class.distsim.crf.ser.gz"
-
-st = StanfordNERTagger(model, jar)
-
-# test dataset type (for each question) [{question: question, human: therapist_response, base: base_response, fine_tuned: fine_tuned_response}]
-anger_dataset = [
+txts = [
     {'text_input': 'Assume the role of a mental health assistant trying to help a person deal with their problems. Use open-ended questions and help the person validate their feelings and reflect on their situation. Process the following context, and respond to the last patient message: mental health assistant: "Well, the first is valuing you, for you and who you are vs. what you can do for them. Function, you said." patient: "I mean, I guess, for my mom, I’m like the child or someone she can share her meal with. So I feel like bad, I guess. But with my friend, I was like, I really didn’ t want to talk, but I felt obligated to talk, you know , even though she did seem interested and like, yeah, you’re a good writer . Yeah, you look good in that skirt, you know . Yeah, you should do this or you should do that. And she said all of these things to me, like it wasn’ t like she just kept talking about herself. But it was just like you know , like I was working on my homework and she called and I shouldn’ t have spoken to her right then, but I couldn’ t not pick her phone. So." mental health assistant: "Why couldn’ t you not?" patient: "I don’ t know like. So she’d call like Friday night or like text and I just walked in to a bar with my friends so I couldn’ t talk to her then. And then I called her over the weekend, and she wasn’ t there. We just kept missing each other , but I felt like I should talk with her . Yeah, I just feel like obligated instead of like it’ s mutual and I get something out of it or it’ s nice to talk to friends, you know . I used to think, oh I don’ t ever talk to anyone on the phone and you know , maybe the conversation lasts five minutes and it’ s all about logistics. And here I have someone to talk to for hours that’ s really...and then I’m still like why do I have to do this?" ', 'therapist_result': 'But you feel like you don’ t have a choice. Like you feel like if you want to pick up, because she’ s been trying to reach you. You don’ t feel like you can say I would love to talk, but now is not a good time. Maybe we can find a time over the next week. You don’ t feel you can do that. And then you feel like somehow she’ s put you in this position that you can’ t say no.', 'base_result': "Okay, so it sounds like you're feeling a bit used, maybe even resentful, in your relationships with both your mom and your friend.  You mentioned feeling obligated to them, and that the interactions don't feel mutually beneficial.  Can you tell me more about what makes you feel obligated to each of them specifically?  What's different about the feeling with your mom compared to your friend?\n", 'finetuned_result': '[00:2 2:00] Okay . Well, one thing is a, it’ s going to take a little while to sort through. And b, I think you’re going to have to sort it out for yourself. Like I’m not going to be able to tell you, okay , you’re feeling this, and there’s nothing wrong with feeling this. You’re also having a problem, and the problem you’re having is this, and here’ s what to do. I think it’ s going to be a process for you to sort through yourself in a way .'},
     {'text_input': 'Assume the role of a mental health assistant trying to help a person deal with their problems. Use open-ended questions and help the person validate their feelings and reflect on their situation. Process the following context, and respond to the last patient message: mental health assistant: "What was he referring to?" patient: "Just what happened with that woman and her father . I guess he was talking to a friend and it came up because he was like, the same circle and that friend knows this woman. So, I guess, the friend was asking Chris or talked to Bryce and Chris was just saying I don’ t want to see her and then Chris told him what happened and I guess the friend was talking more like or saying something like wrong; it wasn’ t right or something. And he came and apologized that he didn’ t respond to the e-mail because she accused me and stuf f. I’m like as you know , you’re kind and you didn’ t do...I don’ t expect you to do anything dif ferent, you know . [Pause.] Just weird. Appearance like, yeah I look. So it’ s not that bad. You know like I started seeing other men because of this and I left your circle and found a new circle. So I’m doing okay . I used that as an excuse to be promiscuous or whatever . [Pause.] Are we out of time?" mental health assistant: "No. You brought up on Monday something we haven’ t really talked about very much to this point, maternity leave and the logistics of maybe how you feel about it. You might want to make sure we can talk about it today and continue to talk about it." patient: "Sure, yeah. When is the leave? [00:42:1 1]" ', 'therapist_result': 'So, assuming all goes as planned, I’ll be here through the third week of June, which is I think June a day or so a week starting at the end of July so that I would at least be able to see you once a week. But I will e- mail you probably mid-July just to let you know how things are going. And then the second week in August, I’m away that week. And then the third week I plan on coming back more like a regular schedule. So I’ll certainly be able to see you a couple of times before then. And then you’ll come back regularly the...I think it’ s the second full or third full week in August. Something like that.', 'base_result': 'Okay, so you\'re asking about your maternity leave and when it starts. That\'s a really important topic, and I understand wanting clarity on that. Before we dive into the specifics of dates and logistics, though,  I noticed you mentioned something earlier about a conversation involving Chris and a friend, and how that made you feel.  It seems like a lot was going on there. Can you tell me more about what specifically felt "weird" about that situation?  What was it about the friend’s reaction or Chris\'s actions that left you feeling that way?  Don\'t worry about explaining everything perfectly; just share what comes to mind.\n', 'finetuned_result': 'Yeah, you were saying that you’re sort of close to finding out more details about how that works. [Pause.] I guess I’m, I guess you have a few things you’re worried about with the leave, one is to do with how that’ll work logistically with the job. And I think another is, am I going to be able to do it, to do it with an employer who might be wary because it’ s going to be a long leave, for three months. And I think those are what you brought up on Monday . [00:43:1 1]'},
     {'text_input': 'Assume the role of a mental health assistant trying to help a person deal with their problems. Use open-ended questions and help the person validate their feelings and reflect on their situation. Process the following context, and respond to the last patient message: mental health assistant: "We did have Skype the year before though, so we did communicate..." patient: "Yeah, because we talked about doing that because those were sessions, right. I don’ t know...because I’ve told you like I’m going away for two months. How am I supposed to like...? I don’ t know like I could like e-mail you in the middle and say , “Hey , I’m just, you know . Can we Skype?”" mental health assistant: "I’m your therapist not only in these sessions, but I’m your therapist. And if you need to contact me, you can contact me. You can always contact me." patient: "I didn’ t know that. [Laughs nervously .]" ', 'therapist_result': 'Well maybe I should have made that more explicit. But I am always...I mean. It almost...I feel some of it is connected to what we were talking about on Monday . Like are we connected and like are you just present for these sessions, or is there like a connection that’ s ongoing throughout whether we’re in each other ’s presence or not? And there is certainly a highly...there’ s a highly structured format to our relationship and I appreciate that. So there’ s not peace, but there’ s sort of like this ongoing like how you feel connected to me or other people outside. And I’m your therapist in here, outside of here. If you need me, you can reach out to me. We’ll figure out a way to be in contact and for us to talk or meet or whatever . And that’ s always true.', 'base_result': "Okay, so it sounds like you're feeling a bit unsure about how to stay connected with me while you're away for two months.  That makes perfect sense –  it's a big change, and it's understandable to feel apprehensive about maintaining our therapeutic connection during that time.\n\nCan you tell me more about what specifically is making you feel unsure about contacting me?  Is it about feeling like you might be bothering me, or is there something else?  And what kind of support are you hoping to get from me during those two months?\n", 'finetuned_result': 'Well, I’m telling you that. You said you’re really worried about what might happen to you when you go away . You know , I’m your therapist not only here but also when you are there. You can contact me. If you need to Skype, you can.'},
@@ -88,53 +148,119 @@ anger_dataset = [
     {'text_input': 'Assume the role of a mental health assistant trying to help a person deal with their problems. Use open-ended questions and help the person validate their feelings and reflect on their situation. Process the following context, and respond to the last patient message: mental health assistant: "It’s like your sort of saying on some register in your mind your feeling the pain, the emotional pain of the divorce for your mom led to a lot of things including bodily....even in her body it was expressed, there’ s this kind of way it’ s felt that way to you, like she’ s in pain in her joints, in her ankles, hands, right?" patient: "Mm hm." mental health assistant: "But also like not dating, not resuming a life worth resuming, I don’ t know , having a life that wasn’ t mired in that pain, wasn’ t defined by it." patient: "Mm hm." ', 'therapist_result': 'Yeah but the grenade again, the analogy of the grenade, the metaphor of the grenade is like if you get into your own kind of experience, maybe it’ s pain but whatever it is if they experience the pain, if your dad does, what’ s it going to do to him? Is he going to be a wounded veteran, you know?  A disabled veteran? Like a dog in this...the way I was thinking about your mom almost like disabled from it.', 'base_result': "Okay, so you've acknowledged that you feel your mom's pain – the emotional pain from the divorce – manifested physically in her body, and that this has impacted you deeply.  You've also indicated that it's affected your ability to move forward and have a fulfilling life,  to create a life that isn't overshadowed by that pain.  \n\nIs there anything you'd like to explore further about that feeling of carrying her pain?  Perhaps we can start with how exactly it *feels* to carry that burden. What sensations or images come to mind when you think about it?  What specific aspects of her pain resonate most strongly with you?  And, if it's alright to ask, how long have you felt this way?\n", 'finetuned_result': 'And the same thing could be happening now for you after your wife left, that that’ s really the big change, the big thing that’ s happened in a while that I think has shaken you and your world up and I don’ t know , I think it’ s too early to tell the extent to which that’ s going to happen, but I think that’ s a plausible trajectory for someone after a divorce.'}
 ]
 
-def analyze_responses(data):
-    results = []
-    for entry in data:
-        human_response = entry['therapist_result']
-        base_response = entry['base_result']
-        fine_tuned_response = entry['finetuned_result']
+base = 0
+fine = 0
+for stat in stats:
+    base += abs(stat['delta_base'])
+    fine += abs(stat['delta_fine_tuned'])
+print("absolute avg base len difference: " + str(base / len(stats)))
+print("absolute avg fine tuned len difference: " + str(fine / len(stats)))
+print("")
 
-        delta_base = len(human_response.split()) - len(base_response.split())
-        delta_fine_tuned = len(human_response.split()) - len(fine_tuned_response.split())
+base = 0
+fine = 0
+for stat in stats:
+    base += (stat['delta_base'])
+    fine += (stat['delta_fine_tuned'])
+print("avg base len difference: " + str(base / len(stats)))
+print("avg fine tuned len difference: " + str(fine / len(stats)))
+print("")
 
-        sentiment_human = TextBlob(human_response).sentiment.polarity
-        sentiment_base = TextBlob(base_response).sentiment.polarity
-        sentiment_fine_tuned = TextBlob(fine_tuned_response).sentiment.polarity
+base_equal = 0
+fine_equal = 0
+for stat in stats:
+    if stat['sentiment_human'] < 0 and stat['sentiment_base'] < 0:
+        base_equal += 1
+    elif stat['sentiment_human'] > 0 and stat['sentiment_base'] > 0:
+        base_equal += 1
+    if stat['sentiment_human'] < 0 and stat['sentiment_fine_tuned'] < 0:
+        fine_equal += 1
+    elif stat['sentiment_human'] > 0 and stat['sentiment_fine_tuned'] > 0:
+        fine_equal += 1
+print("percent of times base sentiment matched real: " + str(base_equal / len(stats)))
+print("percent of times finetuned sentiment matched real: " + str(fine_equal / len(stats)))
+print("")
 
-        def contains_name(text):
-            for sent in sent_tokenize(text):
-                tokens = word_tokenize(sent)
-                tags = st.tag(tokens)
-                for tag in tags:
-                    if tag[1] == 'PERSON':
-                        return True
-            return False
+base = 0
+fine = 0
+for stat in stats:
+    base += abs(stat['sentiment_human'] - stat['sentiment_base'])
+    fine += abs(stat['sentiment_human'] - stat['sentiment_fine_tuned'])
+print("avg sentiment distance between base and real: " + str(base / len(stats)))
+print("avg sentiment distance between finetuned and real: " + str(fine / len(stats)))
+print("")
 
-        human_contains_name = contains_name(human_response)
-        base_contains_name = contains_name(base_response)
-        fine_tuned_contains_name = contains_name(fine_tuned_response)
+real_name_base_no = 0
+real_name_fine_no = 0
+base_name_real_no = 0
+fine_name_real_no = 0
+real_name = 0
+base_name = 0
+fine_name = 0
+for stat in stats:
+    if stat['human_contains_name'] == True:
+        real_name += 1
+    if stat['base_contains_name'] == True:
+        base_name += 1
+    if stat['fine_tuned_contains_name'] == True:
+        fine_name += 1
+    if stat['human_contains_name'] == True and stat['base_contains_name'] == False:
+        real_name_base_no += 1
+    if stat['human_contains_name'] == True and stat['fine_tuned_contains_name'] == False:
+        real_name_fine_no += 1
+    if stat['human_contains_name'] == False and stat['base_contains_name'] == True:
+        base_name_real_no += 1
+    if stat['human_contains_name'] == False and stat['fine_tuned_contains_name'] == True:
+        fine_name_real_no += 1
 
-        x = {
-            # 'question': entry['question'],
-            'delta_base': delta_base,
-            'delta_fine_tuned': delta_fine_tuned,
-            'sentiment_human': sentiment_human,
-            'sentiment_base': sentiment_base,
-            'sentiment_fine_tuned': sentiment_fine_tuned,
-            'human_contains_name': human_contains_name,
-            'base_contains_name': base_contains_name,
-            'fine_tuned_contains_name': fine_tuned_contains_name
-        }
-        print(x)
-        print("")
-        results.append(x)
+print("num times human said name: " + str(real_name))
+print("num times base said name: " + str(base_name))
+print("num times finetuned said name: " + str(fine_name))
+print("num times human said name base did not: " + str(real_name_base_no))
+print("num times human said name finetuned did not: " + str(real_name_fine_no))
+print("num times human did not base said name: " + str(base_name_real_no))
+print("num times human did not finetuned said name: " + str(fine_name_real_no))
+print("")
 
-    return results
+therapist_q = 0
+base_q = 0
+fine_q = 0
+for txt in txts:
+    therapist = txt['therapist_result'].split()
+    for i in therapist:
+        if i[-1] == '?':
+            therapist_q += 1
+            break
+    base = txt['base_result'].split()
+    for i in base:
+        if i[-1] == '?':
+            base_q += 1
+            break
+    fine = txt['finetuned_result'].split()
+    for i in fine:
+        if i[-1] == '?':
+            fine_q += 1
+            break
+print("therapist num responses w/ q: " + str(therapist_q))
+print("base num responses w/ q: " + str(base_q))
+print("finetuned num responses w/ q: " + str(fine_q))
 
-if __name__ == "__main__":
-    results = analyze_responses(anger_dataset)
-    # for result in results:
-    #     print(result)
-    #     print("")
-
+therapist_q = 0
+base_q = 0
+fine_q = 0
+for txt in txts:
+    therapist = txt['therapist_result'].split()
+    for i in therapist:
+        if i[-1] == '?':
+            therapist_q += 1
+    base = txt['base_result'].split()
+    for i in base:
+        if i[-1] == '?':
+            base_q += 1
+    fine = txt['finetuned_result'].split()
+    for i in fine:
+        if i[-1] == '?':
+            fine_q += 1
+print("therapist num qs: " + str(therapist_q))
+print("base num qs: " + str(base_q))
+print("finetuned num qs: " + str(fine_q))
